@@ -1,2 +1,2 @@
-# higher Or Lower
+# Higher Or Lower
 School project... Don't use this code (❁´◡`❁)
