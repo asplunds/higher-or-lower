@@ -71,8 +71,9 @@ namespace HigherOrLower
             for (int i = 0; i < data.Count; i++)
             {
                 var entry = data[i];
-                
-                Console.WriteLine($"{i + 1}. {data[i].Name}: {data[i].Score}");
+                // evaluate the space needed to justify the score to align with the other scores using the longest name as limit
+                string spacer = new string(' ', 3 + dataSortedByNameLength.Last().Key.Name.Length - entry.Name.Length);
+                Console.WriteLine($"{i + 1}. {entry.Name}{spacer}{data[i].Score}");
             }
             Console.WriteLine("\nPress any key to exit.");
             Console.ReadKey();
