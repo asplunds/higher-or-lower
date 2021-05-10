@@ -106,12 +106,15 @@ namespace HigherOrLower
             int value1 = (int)Enum.Parse(typeof(CardDeck), randCard1);
             int value2 = (int)Enum.Parse(typeof(CardDeck), randCard2);
 
+            // ensure next card is the same as the one just drawn
             previous = randCard2;
 
+            // Game over
             if (value1 == value2)
             {
                 SameCards(randCard1, randCard2);
             }
+            // card is an ace
             else if (value1 == 14)
             {
                 CorrectAnswer("higher and lower", randCard2, randCard1);
@@ -189,6 +192,7 @@ namespace HigherOrLower
             int rand = new Random().Next(deck.Count);
             string value = deck[rand];
 
+            // The drawn card must be discarded from the deck ensuring that card is not drawn again
             deck.RemoveAt(rand);
 
             return value;
