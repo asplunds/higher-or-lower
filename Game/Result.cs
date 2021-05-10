@@ -6,6 +6,7 @@ namespace HigherOrLower
         public readonly int points;
         private bool exited = false;
         public bool HasExited => exited;
+        private bool hasWon = false;
         private Highscore hs;
 
         public Result(int points, Highscore hs)
@@ -19,7 +20,9 @@ namespace HigherOrLower
             if (exited)
                 return this;
 
-            new Menu($"Game over. Your score was {points}")
+            string message = hasWon ? "Game won!" : "Game over.";
+
+            new Menu($"{message} Your score was {points}")
                 .AddOptions(new string[]
                 {
                     "OK"
@@ -36,16 +39,22 @@ namespace HigherOrLower
         public string AskForName()
         {
             string name = "";
-            new Menu("Well played!\nWhat is your name?")
-                    .DisplayBox();
 
             while (name.Length <= 0)
             {
+                Console.Clear();
+                new Menu("Well played!\r\nWhat is your name?")
+                    .DisplayBox();
                 name = Console.ReadLine();
             }
 
             return name;
 
+        }
+
+        public Result HasWon() {
+            hasWon = true;
+            return this;
         }
 
         public Result Exited()

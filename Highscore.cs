@@ -21,7 +21,8 @@ namespace HigherOrLower
 
                 // Set the RAM highscore to the file highscore
                 data = stored.Highscores;
-            } catch(Exception e)
+            }
+            catch (Exception)
             {
                 data = new List<HighscoreData>();
             }
@@ -61,6 +62,10 @@ namespace HigherOrLower
             // Sort entries by score
             data.Sort((x, y) => y.Score - x.Score);
 
+            // Check if there are no entries, in which case show message
+            if (data.Count < 1)
+                Console.WriteLine("There are no highscores to display, complete a new game to appear here!");
+
             // Get the longest name
             var dataSortedByNameLength = data
                 .Select((x, i) => new KeyValuePair<HighscoreData, int>(x, i))
@@ -71,8 +76,9 @@ namespace HigherOrLower
             for (int i = 0; i < data.Count; i++)
             {
                 var entry = data[i];
-                
-                Console.WriteLine($"{i + 1}. {data[i].Name}: {data[i].Score}");
+                // evaluate the space needed to justify the score to align with the other scores using the longest name as limit
+                string spacer = new string(' ', 3 + dataSortedByNameLength.Last().Key.Name.Length - entry.Name.Length);
+                Console.WriteLine($"{i + 1}. {entry.Name}{spacer}{data[i].Score}");
             }
             Console.WriteLine("\nPress any key to exit.");
             Console.ReadKey();

@@ -48,18 +48,17 @@ namespace HigherOrLower
         {
             Console.ForegroundColor = ConsoleColor.Red;
 
-            // border top
+            // border top. It's plus 2 because each title fragment gets 2 border characters on each side
             HorizontalLine(largestTitleFragment.Length + 2, "┌", "┐");
 
             // print each title fragment to add box borders
-            foreach (string titleFragment in title.Split("\n"))
+            foreach (string titleFragment in title.Split("\r\n"))
             {
                 // calculate the remaining space for each fragment which is the difference between largest fragment
                 // length minus this fragment length
                 string[] spacingArr = Enumerable.Repeat(" ", largestTitleFragment.Length - titleFragment.Length).ToArray();
                 string spacer = string.Join("", spacingArr);
-                if (titleFragment.Length > 0)
-                    Console.WriteLine($"│ {titleFragment}{spacer} │");
+                Console.WriteLine($"│ {titleFragment}{spacer} │");
             }
 
             // border bottom
@@ -132,9 +131,8 @@ namespace HigherOrLower
         }
         private void HorizontalLine(int length, string start, string end)
         {
-            Console.Write(start);
-            Console.Write(new string('─', length));
-            Console.Write(end);
+            string line = new string('─', length);
+            Console.Write($"{start}{line}{end}");
             Console.WriteLine();
         }
         public string GetSelected()
