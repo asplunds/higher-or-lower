@@ -49,11 +49,14 @@ namespace HigherOrLower
 
                     if (gameOver || result.HasExited) return result;
 
+                    if (result.savePoints) break;
+
                     deal++;
                 }
-                if (streak == maxRounds)
+                if (streak == dealsPerRound)
                     points += 50;
                 round++;
+
             }
 
             return new Result(points, hs);
@@ -93,9 +96,9 @@ namespace HigherOrLower
             // get values of the randomly drawn cards
             int value1 = (int)Enum.Parse(typeof(CardDeck), randCard1.cardType.ToString());
             int value2 = (int)Enum.Parse(typeof(CardDeck), randCard2.cardType.ToString());
-            
+
             // get the value of an ace
-            int ace = (int)Enum.Parse(typeof(CardDeck), CardDeck.Ace.ToString()); 
+            int ace = (int)Enum.Parse(typeof(CardDeck), CardDeck.Ace.ToString());
 
             // ensure next card is the same as the one just drawn
             previous = randCard2;
@@ -103,7 +106,7 @@ namespace HigherOrLower
             // Game over
             if (value1 == value2)
             {
-                SameCards(randCard1.DisplayName, randCard2.DisplayName);
+                return SameCards(randCard1.DisplayName, randCard2.DisplayName);
             }
             // card is an ace
             else if (value1 == 14)
@@ -119,9 +122,10 @@ namespace HigherOrLower
                 }
                 else
                 {
-                    WrongAnswer("lower", randCard2.DisplayName, randCard1.DisplayName);
+                    return WrongAnswer("lower", randCard2.DisplayName, randCard1.DisplayName);
                 }
-            } else
+            }
+            else
             {
                 // Card must be lower to be correct
                 if (value2 < value1)
@@ -130,7 +134,7 @@ namespace HigherOrLower
                 }
                 else
                 {
-                    WrongAnswer("higher", randCard2.DisplayName, randCard1.DisplayName);
+                    return WrongAnswer("higher", randCard2.DisplayName, randCard1.DisplayName);
                 }
             }
             ConfirmProceed();
@@ -139,24 +143,46 @@ namespace HigherOrLower
 
         }
 
-        private void SameCards(string card1, string card2)
+        private Result SameCards(string card1, string card2)
         {
-            Console.WriteLine($"Oh no! The drawn card was {card1} which is the same as {card2}. Game over.");
-            gameOver = true;
-            hasLost = true;
+            Console.WriteLine($"Oh no! The drawn card was {card1} which is the same as {card2}. Round lost.");
+            NextRound();
+            ConfirmProceed();
+            return new Result(points, hs).SavePoints();
         }
 
         private void CorrectAnswer(string comparison, string card1, string card2)
         {
-            Console.WriteLine($"You guessed correct! The card was {card1} which is {comparison} than {card2}");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("You guessed correct!");
+            Console.ResetColor();
+            Console.Write($" The card was {card1} which is {comparison} than {card2}\n\n");
             points++;
             streak++;
         }
 
-        private void WrongAnswer(string comparison, string card1, string card2)
+
+        private Result WrongAnswer(string comparison, string card1, string card2)
         {
-            Console.WriteLine($"You guessed wrong. The card was {card1} which is {comparison} than {card2}");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write("You guessed wrong.");
+            Console.ResetColor();
+            Console.Write($" The card was {card1} which is {comparison} than {card2}\n\n");
+            NextRound();
+            ConfirmProceed();
+            return new Result(points, hs).SavePoints();
+        }
+        private void NextRound()
+        {
             streak = 0;
+            if (round >= maxRounds)
+            {
+                gameOver = true;
+            }
+            else
+            {
+                deal = 0;
+            }
         }
 
 

@@ -8,6 +8,8 @@ namespace HigherOrLower
         public bool HasExited => exited;
         private bool hasWon = false;
         private Highscore hs;
+        // Whether to save the points for the next round
+        public bool savePoints = false;
 
         public Result(int points, Highscore hs)
         {
@@ -54,6 +56,11 @@ namespace HigherOrLower
 
         public Result HasWon() {
             hasWon = true;
+            return this;
+        }
+
+        public Result SavePoints() {
+            savePoints = true;
             return this;
         }
 

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
+
 
 namespace HigherOrLower
 {
@@ -19,13 +21,15 @@ namespace HigherOrLower
         public Menu(string title)
         {
             this.title = title;
-            this.titleFragments = title.Split("\n");
+
+            // Regex to match both darwin, linux and dos
+            this.titleFragments = Regex.Split(title, @"\n|\r\n");
 
             // sort the title fragments with lambda expression in
             // descending order to locate the largest fragment which will be the box width
             Array.Sort(this.titleFragments, (x, y) => y.Length - x.Length);
             largestTitleFragment = this.titleFragments[0];
-            
+
         }
         public Menu AddOptions(string[] options)
         {
@@ -46,19 +50,29 @@ namespace HigherOrLower
 
         public void DisplayBox()
         {
-            Console.ForegroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
 
             // border top. It's plus 2 because each title fragment gets 2 border characters on each side
             HorizontalLine(largestTitleFragment.Length + 2, "┌", "┐");
 
             // print each title fragment to add box borders
-            foreach (string titleFragment in title.Split("\r\n"))
+            foreach (string titleFragment in titleFragments)
             {
+                if (titleFragment.Length <= 0) {
+                    continue;
+                }
+                
                 // calculate the remaining space for each fragment which is the difference between largest fragment
                 // length minus this fragment length
-                string[] spacingArr = Enumerable.Repeat(" ", largestTitleFragment.Length - titleFragment.Length).ToArray();
+                int length = largestTitleFragment.Length - titleFragment.Length < 0 ? 0 : largestTitleFragment.Length - titleFragment.Length;
+                string[] spacingArr = Enumerable.Repeat(" ", length).ToArray();
                 string spacer = string.Join("", spacingArr);
-                Console.WriteLine($"│ {titleFragment}{spacer} │");
+                Console.Write($"│");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write($" {titleFragment}");
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.Write($"{spacer} │\n");
+
             }
 
             // border bottom
@@ -72,7 +86,7 @@ namespace HigherOrLower
             Console.CursorVisible = false;
             while (!completed)
             {
-                
+
                 Console.Clear();
 
                 DisplayBox();
@@ -86,7 +100,7 @@ namespace HigherOrLower
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
                         filler = " > ";
-                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                        Console.ForegroundColor = ConsoleColor.Blue;
                     }
                     string prefix = numbering ? (i + 1).ToString() : "";
 
@@ -117,10 +131,18 @@ namespace HigherOrLower
                         selected = options.Count - 1;
                 }
                 // Enter
-                else if (key == 13)
+                else if (key == 13 && selected >= 0 && selected < options.Count)
                 {
                     completed = true;
                     Console.Clear();
+                }
+                else
+                {
+                    int.TryParse(keyInfo.KeyChar.ToString(), out int number);
+                    if (number > 0)
+                    {
+                        selected = number - 1;
+                    }
                 }
 
             }
