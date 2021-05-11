@@ -1,3 +1,5 @@
+using System;
+
 namespace HigherOrLower
 {
     public partial class Game
